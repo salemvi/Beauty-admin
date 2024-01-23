@@ -26,7 +26,7 @@ export const useAppointmentService = () => {
 
         const transformedActive: IAppointmentActive[]  = 
             baseService.filter((item) => !item.canceled &&
-            dayjs(item.date).diff(undefined, 'minute')).map((item) => {
+            dayjs(item.date).diff(undefined, 'minute') > 0).map((item)  => {
             const {id, date, name, service, phone} = item
             return {
                 id,
@@ -39,5 +39,18 @@ export const useAppointmentService = () => {
         return transformedActive
     }
 
-    return  { loadingStatus, getAllAppointments, getActiveAppointments}
+    const cancelOneAppointment = async (id: number) => {
+        return await request({
+            url: `${_apiBase}/${id}`,
+            method: 'PATCH',
+            body: JSON.stringify({canceled: true})
+        })
+    }
+
+    return  { 
+        loadingStatus, 
+        getAllAppointments,
+        getActiveAppointments,
+        cancelOneAppointment
+        }
 }

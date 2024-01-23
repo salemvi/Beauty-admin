@@ -40,7 +40,8 @@ function AppointmentList() {
 				return <AppointmentItem 
 				{...item} 
 				key={item.id} 
-				handleModal={handleOpenModal} 
+				handleModal={handleOpenModal}
+				getAllActiveAppointments={getAllActiveAppointments}
 				/>
 			})}
 			<CancelModal 

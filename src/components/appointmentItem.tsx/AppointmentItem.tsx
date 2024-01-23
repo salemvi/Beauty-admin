@@ -7,11 +7,12 @@ type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 
 type AppointmentProps = Optional<IAppointment, 'canceled'> & {
 	handleModal: (state: number) => void;
+	getAllActiveAppointments : () => void;
 }
 
 const AppointmentItem: React.FC<AppointmentProps> = memo(
 ({
-	id, date, name, service, phone, canceled, handleModal
+	id, date, name, service, phone, canceled, handleModal, getAllActiveAppointments
 }: AppointmentProps) => {
 	const [timeLeft, setTimeLeft] = useState<string | null>(null)
 	const formattedDate = dayjs(date).format('DD/MM/YYYY HH:mm')
@@ -19,7 +20,14 @@ const AppointmentItem: React.FC<AppointmentProps> = memo(
 	useEffect(() => {
 		setTimeLeft(`${dayjs(date).diff(undefined, 'h')}:${dayjs(date).diff(undefined, 'minute')}`)
 		const intervalId = setInterval(() => {
-			setTimeLeft(`${dayjs(date).diff(undefined, 'h')}:${dayjs(date).diff(undefined, 'minute')}`)
+			if (dayjs(date).diff(undefined, 'm') <= 0) {
+				if (getAllActiveAppointments) {
+					getAllActiveAppointments()
+				}
+				clearInterval(intervalId)
+			} else {
+				setTimeLeft(`${dayjs(date).diff(undefined, 'h')}:${dayjs(date).diff(undefined, 'minute')}`)
+			}
 		},600000)
 		return () => {
 			clearInterval(intervalId)
